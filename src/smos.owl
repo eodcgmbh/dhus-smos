@@ -609,4 +609,180 @@
 
    </rdf:Description>
 
+   <!-- SMOS AUX PRODUCT -->
+    <rdf:Description rdf:about="&smos;aux_product">
+
+        <dhus:identifier rdf:parseType="Literal">
+            <![CDATA[
+             fn:tokenize(name (.), '\.')[1]
+            ]]>
+        </dhus:identifier>
+
+        <dhus:metadataTypes rdf:parseType="Literal">
+            <metadataType id="satellite"
+                          name="Satellite"
+                          contentType="text/plain"
+                          category="summary">
+             </metadataType>
+
+            <metadataType id="instrument"
+                          name="Instrument"
+                          contentType="text/plain"
+                          category="summary">
+            </metadataType>
+
+            <metadataType id="date"
+                          name="Date"
+                          contentType="text/date+iso8601"
+                          category="summary">
+            </metadataType>
+
+            <!-- acquisition -->
+
+            <metadataType id="beginPosition"
+                          name="Sensing start"
+                          contentType="text/date+iso8601"
+                          category="product">
+                <solrField name="beginposition"
+                           type="tdate"/>
+            </metadataType>
+
+            <metadataType id="endPosition"
+                          name="Sensing stop"
+                          contentType="text/date+iso8601"
+                          category="product">
+               <solrField name="endposition"
+                          type="tdate"/>
+            </metadataType>
+
+            <!-- platform -->
+            <metadataType id="platformName"
+                          name="Platform name"
+                          contentType="text/plain"
+                          category="platform">
+               <solrField name="platformname"
+                          type="text_general"/>
+            </metadataType>
+
+            <metadataType id="platformShortName"
+                          name="Platform short name"
+                          contentType="text/plain"
+                          category="platform">
+               <solrField name="platformshortname"
+                          type="text_general"/>
+            </metadataType>
+
+            <metadataType id="platformSerialIdentifier"
+                          name="Platform serial identifier"
+                          contentType="text/plain"
+                          category="platform">
+               <solrField name="platformserialidentifier"
+                          type="text_general"/>
+            </metadataType>
+
+            <metadataType id="platformNssdcIdentifier"
+                          name="Platform NSSDC identifier"
+                          contentType="text/plain"
+                          category="platform">
+               <solrField name="platformnssdcidentifier"
+                          type="text_general"/>
+            </metadataType>
+
+            <!-- instrument -->
+
+            <metadataType id="instrumentName"
+                          name="Instrument name"
+                          contentType="text/plain"
+                          category="instrument">
+               <solrField name="instrumentname"
+                          type="text_general"/>
+            </metadataType>
+
+            <metadataType id="instrumentShortName"
+                          name="Instrument short name"
+                          contentType="text/plain"
+                          category="instrument">
+               <solrField name="instrumentshortname"
+                          type="text_general"/>
+            </metadataType>
+
+            <metadataType id="processorVersion"
+                          name="Processor version"
+                          contentType="text/plain"
+                          category="product">
+                <solrField name="processorversion"
+                           type="text_general"/>
+            </metadataType>
+
+            <metadataType id="generationTime"
+                          name="Generation time"
+                          contentType="text/plain"
+                          category="product">
+            </metadataType>
+
+            <metadataType id="processingMode"
+                          name="Processing mode"
+                          contentType="text/plain"
+                          category="product">
+            <solrField name="processingmode"
+                       type="text_general"/>
+            </metadataType>
+
+            <metadataType id="processingModeAbbreviation"
+                          name="Processing mode abbreviation"
+                          contentType="text/plain"
+                          category="product">
+                <solrField name="processingmodeabbreviation"
+                           type="text_general"/>
+            </metadataType>
+
+            <!-- other -->
+
+            <metadataType id="productType"
+                          name="Product type"
+                          contentType="text/plain"
+                          category="product">
+                <solrField name="producttype"
+                           type="text_general"/>
+            </metadataType>
+
+            <metadataType id="productDescription"
+                          name="Product description"
+                          contentType="text/plain"
+                          category="product">
+                <solrField name="productdescription"
+                           type="text_general"/>
+            </metadataType>
+
+            <metadataType id="size"
+                          name="Size"
+                          contentType="text/plain"
+                          category="summary">
+                <solrField name="size"
+                           type="string"/>
+            </metadataType>
+
+            <metadataType id="format"
+                          name="Format"
+                          contentType="text/plain"
+                          category="product">
+                <solrField name="format"
+                           type="string"
+                           required="true"/>
+            </metadataType>
+
+            <metadataType id="filename"
+                          name="Filename"
+                          contentType="text/plain"
+                          category="summary">
+                <solrField name="filename"
+                           type="string"
+                           required="true"/>
+            </metadataType>
+        </dhus:metadataTypes>
+
+        <dhus:metadataExtractor>
+
+        </dhus:metadataExtractor>
+    </rdf:Description>
 </rdf:RDF>
