@@ -610,7 +610,7 @@
    </rdf:Description>
 
    <!-- SMOS AUX PRODUCT -->
-    <rdf:Description rdf:about="&smos;aux_product">
+    <rdf:Description rdf:about="&smos;productAux">
 
         <dhus:identifier rdf:parseType="Literal">
             <![CDATA[
@@ -782,7 +782,241 @@
         </dhus:metadataTypes>
 
         <dhus:metadataExtractor>
+            <![CDATA[
+                     <!-- ============================================================== -->
+                     <!-- FUNCTIONS                                                      -->
+                     <!-- ============================================================== -->
 
+                     declare function local:computeSizes ($path, $base as item()*) as item()*
+                     {
+                        let $product := .
+                        return
+                           fn:data($product/@size)
+                     };
+
+                     declare function local:roundHalfDown($arg, $precision) as xs:double*
+                     {
+                        xs:integer((xs:double($arg)*math:power(10, $precision))) div
+                           math:power(10, $precision)
+                     };
+
+                     declare function local:computedateTime ($inputDate as xs:string?) as xs:string
+                     {
+                        let $input := $inputDate
+                        return concat(substring($input, 5, 19),
+                                      ".000Z")
+                     };
+
+                     <!-- ============================================================== -->
+                     <!-- VARIABLES                                                      -->
+                     <!-- ============================================================== -->
+
+                     let $name := name()
+
+                     let $hdrFile := *[matches(name(),".*\.HDR")]
+
+                     let $VAR_Earth_Explorer_Header := $hdrFile/Earth_Explorer_Header
+
+                     let $VAR_Fixed_Header := $VAR_Earth_Explorer_Header/Fixed_Header
+
+                     let $VAR_Variable_Header := $VAR_Earth_Explorer_Header/Variable_Header
+
+                     let $VAR_beginPosition := local:computedateTime(
+                        data($VAR_Fixed_Header/Validity_Period/Validity_Start))
+
+                     let $VAR_endPosition := local:computedateTime(
+                        data($VAR_Fixed_Header/Validity_Period/Validity_Stop))
+
+                     let $VAR_processingModeAbbreviation :=
+                        fn:data($VAR_Fixed_Header/File_Class)
+
+                     return
+                     (
+
+                     <!-- ============================================================== -->
+                     <!-- EXTRACTIONS                                                    -->
+                     <!-- ============================================================== -->
+
+                     <!-- Indexed metadata -->
+
+                     <!-- MM This is added for provisoire
+                     This should be renamed FOR ALL ADDONS -->
+                     <!-- SATELLITE -->
+                     <metadata name="Satellite"
+                               category="summary" type="text/plain">
+                        SMOS
+                     </metadata>,
+
+                     <!-- MM This is added for provisoire
+                     This should be renamed FOR ALL ADDONS -->
+                     <!-- INSTRUMENT -->
+                     <metadata name="Instrument"
+                               category="summary" type="text/plain">
+                        MIRAS
+                     </metadata>,
+
+                     <!-- MM This is added for provisoire
+                     This should be renamed FOR ALL ADDONS -->
+                     <!-- DATE -->
+                     <metadata name="Date"
+                               category="summary" type="text/date+iso8601">
+                     { $VAR_beginPosition }
+                     </metadata>,
+
+                     <!-- acquisition -->
+
+                     <!-- SENSING START -->
+                     <metadata queryable="beginposition" name="Sensing start"
+                               category="product" type="text/date+iso8601">
+                     { $VAR_beginPosition }
+                     </metadata>,
+
+                     <!-- SENSING STOP -->
+                     <metadata queryable="endposition" name="Sensing stop"
+                               category="product" type="text/date+iso8601">
+                     { $VAR_endPosition }
+                     </metadata>,
+
+                     <!-- platform -->
+
+                     <!-- PLATFORM NAME -->
+                     <metadata queryable="platformname" name="Platform name"
+                               category="platform" type="text/plain">
+                        Soil Moisture and Ocean Salinity
+                     </metadata>,
+
+                     <!-- PLATFORM SHORT NAME -->
+                     <metadata queryable="platformshortname" name="Platform short name"
+                               category="platform" type="text/plain">
+                        SMOS
+                     </metadata>,
+
+                     <!-- PLATFORM SERIAL IDENTIFIER -->
+                     <metadata queryable="platformserialidentifier" name="Platform serial identifier"
+                               category="platform" type="text/plain">
+                        1
+                     </metadata>,
+
+                     <!-- PLATFORM NSSDC IDENTIFIER -->
+                     <metadata queryable="platformnssdcidentifier" name="Platform NSSDC identifier"
+                               category="platform" type="text/plain">
+                        2009-059A
+                     </metadata>,
+
+                     <!-- instrument -->
+
+                     <!-- INSTRUMENT NAME -->
+                     <metadata queryable="instrumentname" name="Instrument name"
+                               category="instrument" type="text/plain">
+                        Microwave Imaging Radiometer with Aperture Synthetis
+                     </metadata>,
+
+                     <!-- INSTRUMENT SHORT NAME -->
+                     <metadata queryable="instrumentshortname" name="Instrument short name"
+                               category="instrument" type="text/plain">
+                        MIRAS
+                     </metadata>,
+
+                     <!-- PROCESSOR VERSION -->
+                     <metadata queryable="processorversion" name="Processor version"
+                               category="product" type="text/plain">
+                     { fn:data($VAR_Fixed_Header/Source/Creator_Version) }
+                     </metadata>,
+
+                     <!-- GENERATION TIME -->
+                     <metadata name="Generation time"
+                               category="product" type="text/plain">
+                     {
+                       local:computedateTime(
+                          fn:data($VAR_Fixed_Header/Source/Creation_Date))
+                     }
+                     </metadata>,
+
+                     <!-- PROCESSING MODE -->
+                     <metadata queryable="processingmode" name="Processing mode"
+                               category="product" type="text/plain">
+                     {
+                        if ($VAR_processingModeAbbreviation = "TEST")
+                        then "Internal Test"
+                        else
+                           if ($VAR_processingModeAbbreviation = "OPER")
+                           then "Operational Processing"
+                           else
+                              if ($VAR_processingModeAbbreviation = "REPR")
+                              then "Reprocessing"
+                              else "UNKNOWN"
+                     }
+                     </metadata>,
+
+                     <!-- PROCESSING MODE ABBREVIATION -->
+                     <metadata queryable="processingmodeabbreviation" name="Processing mode abbreviation"
+                               category="product" type="text/plain">
+                     { $VAR_processingModeAbbreviation }
+                     </metadata>,
+
+                     <!-- other -->
+
+                     <!-- PRODUCT TYPE -->
+                     <metadata queryable="producttype" name="Product type"
+                               category="product" type="text/plain">
+                     { fn:data($VAR_Fixed_Header/File_Type)  }
+                     </metadata>,
+
+                     <!-- PRODUCT DESCRIPTION -->
+                     <metadata queryable="productdescription" name="Product description"
+                               category="product" type="text/plain">
+                     { fn:data($VAR_Fixed_Header/File_Description)  }
+                     </metadata>,
+
+                     <!-- SIZE -->
+                     <!-- WARN The input product is a zip, and so the
+                     result should be wrong -->
+                     <metadata queryable="size" name="Size"
+                               category="summary" type="text/plain">
+                     {
+                        let $size := xs:double(fn:sum(local:computeSizes(., ())))
+                        let $kilo := 1024
+                        let $mega := xs:integer($kilo * 1024)
+                        let $giga := xs:integer($mega * 1024)
+                        let $tera := xs:integer($giga * 1024)
+                        let $kilo_size := local:roundHalfDown(($size div $kilo), 2)
+                        let $mega_size := local:roundHalfDown(($size div $mega), 2)
+                        let $giga_size := local:roundHalfDown(($size div $giga), 2)
+                        let $tera_size := local:roundHalfDown(($size div $tera), 2)
+                        return
+                           if ($size < 1024)
+                           then
+                              concat ($size, " bytes")
+                           else
+                              if (($size div $kilo) < 1024)
+                              then
+                                 concat ($kilo_size, " KB")
+                              else
+                                 if (($size div $mega) < 1024)
+                                    then
+                                       concat ($mega_size, " MB")
+                                 else
+                                    if (($size div $giga) < 1024)
+                                    then
+                                       concat ($giga_size, " GB")
+                                    else
+                                       concat ($tera_size, " TB")
+                     }
+                     </metadata>,
+
+                     <!-- FORMAT -->
+                     <metadata queryable="format" name="Format"
+                               category="product" type="text/plain">
+                        Earth-Explorer
+                     </metadata>,
+
+                     <!-- FILENAME -->
+                     <metadata queryable="filename" name="Filename"
+                               category="summary" type="text/plain">
+                     { $name }
+                     </metadata>
+                     )
+                  ]]>
         </dhus:metadataExtractor>
     </rdf:Description>
 </rdf:RDF>
